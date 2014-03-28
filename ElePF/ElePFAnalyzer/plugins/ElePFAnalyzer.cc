@@ -1,3 +1,5 @@
+//new
+
 // -*- C++ -*-
 //
 // Package:    ElePFAnalyzer
@@ -160,21 +162,16 @@ private:
 				   const edm::Event&, 
 				   const edm::EventSetup&);
 
+
   bool isaV( int pdgId);
   bool isaBhadron(int pdgId);
   bool isaDhadron(int pdgId);
   int parent(const reco::Candidate& mom);
   //  int getBin( float );
   //  int getBin( float, float );
-  double testPreshowerDistance(PFCluster eeclus,
-			       PFCluster psclus);
+  //   double testPreshowerDistance(PFCluster eeclus,
+  // 			       PFCluster psclus);
 
-  void PSforTMVA(math::XYZTLorentzVector mom,
-		 math::XYZTLorentzVector pos);
-  bool IsIsolated(float  charge,float P,
-		  math::XYZPointF, 
-		  const reco::PFClusterCollection &ecalColl,
-		  const reco::PFClusterCollection &hcalColl);
   void fillPreIdRefValueMap( edm::Handle<reco::TrackCollection> tkhandle,
 			     const edm::OrphanHandle<reco::PreIdCollection>&,
 			     edm::ValueMap<reco::PreIdRef>::Filler & filler);
@@ -228,9 +225,8 @@ private:
   std::vector<reco::PFCluster> ps2Clus;
   Bool_t useNuclear_;
 
-
-  float thr[150];
-  float thrPS[20];
+  //  float thr[150];
+  //  float thrPS[20];
 
   ///ISOLATION REQUEST AS DONE IN THE TAU GROUP
   double HcalIsolWindow_;
@@ -297,7 +293,7 @@ private:
   int   trk_nmatched_;
   int   trk_quality_;
   float trk_ep_;
-  float trk_epCorr_;
+  //  float trk_epCorr_;
   float trk_dr_;
 
   float trk_ecalDist_;
@@ -309,16 +305,11 @@ private:
   float trk_chiRatio_;
   float trk_chiReduced_;
   float ecal_e_;
-  int   ecal_ps_;
-  float ecal_ps1e_;
-  float ecal_ps2e_;
+  //   int   ecal_ps_;
+  //   float ecal_ps1e_;
+  //   float ecal_ps2e_;
 
   TFile *file;
-
-  Float_t ps1En;
-  Float_t ps2En;
-  Float_t ps1chi;
-  Float_t ps2chi;
 
   Int_t nEle;
   Int_t nPion;
@@ -363,7 +354,7 @@ ElePFAnalyzer::ElePFAnalyzer(const edm::ParameterSet& iConfig):
   resMapPhiECAL_(0),
   pfTkTransformer_(0)
 {
-  //  pfTrackLabel_     = iConfig.getParameter<edm::InputTag>( "PFRecTrackLabel" );
+  pfTrackLabel_     = iConfig.getParameter<edm::InputTag>( "PFRecTrackLabel" );
   pfNuclear_        = iConfig.getParameter<edm::InputTag>( "PFNuclear" );
   gsfTrackLabel_    = iConfig.getParameter<edm::InputTag>( "GsfTrackModuleLabel" );
 
@@ -447,7 +438,7 @@ ElePFAnalyzer::ElePFAnalyzer(const edm::ParameterSet& iConfig):
   bdtTree->Branch("trk_nmatched", &trk_nmatched_, "trk_nmatched/I");
   bdtTree->Branch("trk_quality",  &trk_quality_,  "trk_quality/I");
   bdtTree->Branch("trk_ep",       &trk_ep_,       "trk_ep/F");
-  bdtTree->Branch("trk_epCorr",   &trk_epCorr_,   "trk_epCorr/F");
+  //  bdtTree->Branch("trk_epCorr",   &trk_epCorr_,   "trk_epCorr/F");
   bdtTree->Branch("trk_dr",       &trk_dr_,       "trk_dr/F");
   bdtTree->Branch("trk_ecalDist", &trk_ecalDist_, "trk_ecalDist/F");
   bdtTree->Branch("trk_ecalDphi", &trk_ecalDphi_, "trk_ecalDphi/F");
@@ -457,9 +448,9 @@ ElePFAnalyzer::ElePFAnalyzer(const edm::ParameterSet& iConfig):
   bdtTree->Branch("trk_chiReduced", &trk_chiReduced_, "trk_chiReduced/F");
 
   bdtTree->Branch("ecal_e",  &ecal_e_, "ecal_e/F");
-  bdtTree->Branch("ecal_ps", &ecal_ps_, "ecal_ps/I");
-  bdtTree->Branch("ecal_ps1e", &ecal_ps1e_, "ecal_ps1e/F");
-  bdtTree->Branch("ecal_ps2e", &ecal_ps2e_, "ecal_ps2e/F");
+  //   bdtTree->Branch("ecal_ps", &ecal_ps_, "ecal_ps/I");
+  //   bdtTree->Branch("ecal_ps1e", &ecal_ps1e_, "ecal_ps1e/F");
+  //   bdtTree->Branch("ecal_ps2e", &ecal_ps2e_, "ecal_ps2e/F");
 
   EventInfo = new TTree("EventInfo", "EventInfo");
   EventInfo->Branch("nEle", &nEle, "nEle/I");
@@ -884,7 +875,7 @@ void ElePFAnalyzer::clearBDTTreeVariables() {
   trk_nmatched_ = 0;
   trk_quality_  = 0;
   trk_ep_       = 1000;
-  trk_epCorr_   = 1000;
+  //  trk_epCorr_   = 1000;
   trk_dr_       = 1000;
   trk_ecalDist_ = 1000;
   trk_ecalDphi_ = 1000;
@@ -896,9 +887,9 @@ void ElePFAnalyzer::clearBDTTreeVariables() {
   trk_chiReduced_ = 1000;
 
   ecal_e_ = 0;
-  ecal_ps_ = 0;
-  ecal_ps1e_ = 0;
-  ecal_ps2e_ = 0;
+  //   ecal_ps_ = 0;
+  //   ecal_ps1e_ = 0;
+  //   ecal_ps2e_ = 0;
 
 }
 
@@ -961,13 +952,11 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByLabel(label_tp_, TPCollectionH);
   const TrackingParticleCollection tPC = *(TPCollectionH.product());
 
-  //cout << __LINE__ << endl;
   if ( tPC.size() == 0 ) {
     edm::LogInfo("ElePFAnalyzer") 
       << "TP Collection for efficiency studies has size = 0! Skipping Event.";
     return;
   }
-  //cout << __LINE__ << endl;
   iEvent.getByLabel("genParticles", genParticles_);
   
   Handle<reco::GsfTrackCollection> gsftrackscoll;
@@ -977,7 +966,6 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByLabel("pfTrack",thePfRecTrackCollection);
   const PFRecTrackCollection& PfRTkColl = *(thePfRecTrackCollection.product());
 
-  //cout << __LINE__ << endl;
   //ECAL clusters	      
   Handle<PFClusterCollection> theECPfClustCollection;
   iEvent.getByLabel(pfCLusTagECLabel_,theECPfClustCollection);
@@ -987,13 +975,11 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
        iklus!=theECPfClustCollection.product()->end();
        iklus++){
     if((*iklus).correctedEnergy()>clusThreshold_) basClus.push_back(*iklus);
-    //    if((*iklus).energy()>clusThreshold_) basClus.push_back(*iklus);
   }
 
   iSetup.get<TrajectoryFitter::Record>().get(fitterName_, fitter_);
   iSetup.get<TrajectoryFitter::Record>().get(smootherName_, smoother_);
 
-  //cout << __LINE__ << endl;
   // clear temporary maps
   refMap_.clear();
 
@@ -1008,14 +994,13 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   ps1Clus.clear();
   ps2Clus.clear();
 
-  //cout << __LINE__ << endl;
   for (iklus=thePSPfClustCollection.product()->begin();
        iklus!=thePSPfClustCollection.product()->end();
        iklus++){
     if ((*iklus).layer()== PFLayer::PS1) ps1Clus.push_back(*iklus);
     if ((*iklus).layer()== PFLayer::PS2) ps2Clus.push_back(*iklus);
   }
-  //cout << __LINE__ << endl;
+
   reco::SimToRecoCollection q = 
     associatorByHits->associateSimToReco(trackCollectionH, 
   					 TPCollectionH, 
@@ -1027,7 +1012,6 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByLabel("electronMergedSeeds", seedelectrons);
 
   ElectronSeedCollection eleSeeds = *( seedelectrons.product() );
-  //cout << __LINE__ << endl;
   nSeed = 0;
   for ( unsigned int iseed = 0; iseed < eleSeeds.size(); ++iseed ){
     ElectronSeedRef SeedRef( seedelectrons, iseed );
@@ -1163,7 +1147,6 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       reco::PFRecTrack pfrectrack( trackRef->charge(), 
 				   reco::PFRecTrack::KF, 
 				   indexTrack, trackRef);
-      //cout << __LINE__ << endl;
       Trajectory FakeTraj;
       pfTkTransformer_->addPoints(pfrectrack, *trackRef, FakeTraj);
       pfrectrack.calculatePositionREP();
@@ -1236,7 +1219,7 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	bool isBelowPS=(fabs(theOutParticle.vertex().eta())>1.65) ? true :false;	
 	
 	unsigned clusCounter=0;
-	
+	float max_ee = 0;	
 	for(vector<PFCluster>::const_iterator aClus = basClus.begin();
 	    aClus != basClus.end(); aClus++,++clusCounter) {
 	  
@@ -1258,13 +1241,20 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  
 	  if ((tmp_dr<dr)&&(tmp_ep>minEp_)&&(tmp_ep<maxEp_)){
 	    dr=tmp_dr;
-	    toteta=aClus->position().eta()-etarec;
-	    totphi=tmp_phi;
-	    EP=tmp_ep;
-	    EE=aClus->energy();
-	    feta= aClus->position().eta();
-	    clusterRef = PFClusterRef(theECPfClustCollection,clusCounter);
-	    meanShowerSaved = meanShower;
+
+	    if(dr < 0.2){
+	      if(aClus->correctedEnergy() > max_ee){
+		max_ee = aClus->correctedEnergy();
+
+		toteta=aClus->position().eta()-etarec;
+		totphi=tmp_phi;
+		EP=tmp_ep;
+		EE=aClus->energy();
+		feta= aClus->position().eta();
+		clusterRef = PFClusterRef(theECPfClustCollection,clusCounter);
+		meanShowerSaved = meanShower;
+	      }
+	    }
 	  }
 	}
       }
@@ -1335,8 +1325,6 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   for( size_t i = 0; i < genParticles_->size(); ++i ){
     const GenParticle& genCand = (*genParticles_)[i];
 
-    //    //cout << __LINE__ << endl;
-
     bool electron = abs(genCand.pdgId()) == 11;
     bool pion     = abs(genCand.pdgId()) == 211;
 
@@ -1358,11 +1346,9 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     // consider electrons and pions for pT > 2 GeV
     int parentId = tracer(genCand);
 
-    //    //cout << __LINE__ << endl;
     // we fill the tree per each gen-level particle
     // so clear the variables
     clearBDTTreeVariables();
-    //cout << __LINE__ << endl;
 
     // fill gen level info for a particle:
     gen_pt_ = genCand.pt();
@@ -1518,7 +1504,7 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  
 	    if(dr < 0.2){
 
-	      if(aClus->energy() > max_ee){
+	      if(aClus->correctedEnergy() > max_ee){
 		max_ee = aClus->correctedEnergy();
 
 		toteta=aClus->position().eta()-etarec;
@@ -1546,47 +1532,48 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       trk_ecalDeta_ = fabs(toteta);
       trk_ecalDphi_ = fabs(totphi);
 
-      // Check for PS clusters
-      std::vector<std::pair<PFCluster, float> > psClustersAndDist;
-      psClustersAndDist.clear();
-      float min_dist = -1.0; // minimal distance to consider in PS matching
-      if ( fabs(feta) > 1.68 ) { // in PS area
-	for ( PFClusterCollection::const_iterator ips = ps1Clus.begin();
-	      ips != ps1Clus.end(); ++ips ) {
-	  float dist = testPreshowerDistance(*clusterRef, *ips);
-	  if ( dist == -1.0 || ( min_dist != -1.0 && dist > min_dist ) ) continue;
-	  if ( dist < min_dist || min_dist == -1.0 ) {
-	    psClustersAndDist.push_back(std::make_pair(*ips, dist));
-	  }
-	}
+      //       // Check for PS clusters
+      //       std::vector<std::pair<PFCluster, float> > psClustersAndDist;
+      //       psClustersAndDist.clear();
+      //       float min_dist = -1.0; // minimal distance to consider in PS matching
+      //       if ( fabs(feta) > 1.68 ) { // in PS area
+      // 	for ( PFClusterCollection::const_iterator ips = ps1Clus.begin();
+      // 	      ips != ps1Clus.end(); ++ips ) {
+      // 	  float dist = testPreshowerDistance(*clusterRef, *ips);
+      // 	  if ( dist == -1.0 || ( min_dist != -1.0 && dist > min_dist ) ) continue;
+      // 	  if ( dist < min_dist || min_dist == -1.0 ) {
+      // 	    psClustersAndDist.push_back(std::make_pair(*ips, dist));
+      // 	  }
+      // 	}
 
-	for ( PFClusterCollection::const_iterator ips = ps2Clus.begin();
-	      ips != ps2Clus.end(); ++ips ) {
-	  float dist = testPreshowerDistance(*clusterRef, *ips);
-	  if ( dist == -1.0 || ( min_dist != -1.0 && dist > min_dist ) ) continue;
-	  if ( dist < min_dist || min_dist == -1.0 ) {
-	    psClustersAndDist.push_back(std::make_pair(*ips, dist));
-	  }
-	}
+      // 	for ( PFClusterCollection::const_iterator ips = ps2Clus.begin();
+      // 	      ips != ps2Clus.end(); ++ips ) {
+      // 	  float dist = testPreshowerDistance(*clusterRef, *ips);
+      // 	  if ( dist == -1.0 || ( min_dist != -1.0 && dist > min_dist ) ) continue;
+      // 	  if ( dist < min_dist || min_dist == -1.0 ) {
+      // 	    psClustersAndDist.push_back(std::make_pair(*ips, dist));
+      // 	  }
+      // 	}
 	
-	for(std::vector<std::pair<PFCluster, float> >::const_iterator ips = psClustersAndDist.begin();
-	    ips != psClustersAndDist.end(); ++ips) {
-	  ++ecal_ps_;
-	  PFCluster ps = ips->first;
-	  const PFLayer::Layer pslayer = ps.layer();
-	  const double psenergy = ps.energy();
-	  ecal_ps1e_ += (PFLayer::PS1 == pslayer)*psenergy;
-	  ecal_ps2e_ += (PFLayer::PS2 == pslayer)*psenergy;
-	}
-      }//loop over for eta cut |eta| > 1.68
+      // 	for(std::vector<std::pair<PFCluster, float> >::const_iterator ips = psClustersAndDist.begin();
+      // 	    ips != psClustersAndDist.end(); ++ips) {
+      // 	  ++ecal_ps_;
+      // 	  PFCluster ps = ips->first;
+      // 	  const PFLayer::Layer pslayer = ps.layer();
+      // 	  const double psenergy = ps.energy();
+      // 	  ecal_ps1e_ += (PFLayer::PS1 == pslayer)*psenergy;
+      // 	  ecal_ps2e_ += (PFLayer::PS2 == pslayer)*psenergy;
+      // 	}
+      //       }//loop over for eta cut |eta| > 1.68
+
       // EoP ----------
       ecal_e_ = EE;
       trk_ep_ = EE/trk_pTOB_;
 
-      if ( ecal_ps_ != 0 ) 
-	trk_epCorr_ = (EE + ecal_ps1e_ + ecal_ps2e_)/trk_pTOB_;
-      else
-	trk_epCorr_ = EE/trk_pTOB_;
+      //       if ( ecal_ps_ != 0 ) 
+      // 	trk_epCorr_ = (EE + ecal_ps1e_ + ecal_ps2e_)/trk_pTOB_;
+      //       else
+      // 	trk_epCorr_ = EE/trk_pTOB_;
 
       Trajectory::ConstRecHitContainer tmp;
       TrajectorySeed Seed = (*trackRef->seedRef());
@@ -1700,7 +1687,7 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       //read PS threshold
       FileInPath parPSFile(conf_.getParameter<string>("PSThresholdFile"));
       ifstream ifsPS(parPSFile.fullPath().c_str());
-      for (int iy=0;iy<12;iy++) ifsPS >> thrPS[iy];
+      //      for (int iy=0;iy<12;iy++) ifsPS >> thrPS[iy];
   
     }
 
@@ -1714,126 +1701,30 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       pfTkTransformer_ = nullptr;
 
     }
-    int ElePFAnalyzer::getBin(float pt){
-      int ip=0;
-      if (pt<6) ip=0;
-      else {  if (pt<12) ip=1;
-	else ip=2;
-      }
-      return ip;
-    }  
+int ElePFAnalyzer::getBin(float pt){
+  int ip=0;
+  if (pt<6) ip=0;
+  else {  if (pt<12) ip=1;
+    else ip=2;
+  }
+  return ip;
+}  
 
-    double ElePFAnalyzer::testPreshowerDistance(PFCluster eeclus,
-						PFCluster psclus) {
+//     double ElePFAnalyzer::testPreshowerDistance(PFCluster eeclus,
+// 						PFCluster psclus) {
 
-      const reco::PFCluster::REPPoint& pspos = psclus.positionREP();
-      const reco::PFCluster::REPPoint& eepos = eeclus.positionREP();
-      // same side of the detector?
-      if ( eeclus.z()*psclus.z() < 0 ) return -1.0;
+//       const reco::PFCluster::REPPoint& pspos = psclus.positionREP();
+//       const reco::PFCluster::REPPoint& eepos = eeclus.positionREP();
+//       // same side of the detector?
+//       if ( eeclus.z()*psclus.z() < 0 ) return -1.0;
 
-      const double dphi = std::abs(TVector2::Phi_mpi_pi(eepos.phi() - pspos.phi()));
-      if ( dphi > 0.6 ) return -1.0;
-      const double deta = std::abs(eepos.eta() - pspos.eta());
-      if ( deta > 0.3 ) return -1.0;
-      return LinkByRecHit::testECALAndPSByRecHit(eeclus, psclus, false);
-    }
+//       const double dphi = std::abs(TVector2::Phi_mpi_pi(eepos.phi() - pspos.phi()));
+//       if ( dphi > 0.6 ) return -1.0;
+//       const double deta = std::abs(eepos.eta() - pspos.eta());
+//       if ( deta > 0.3 ) return -1.0;
+//       return LinkByRecHit::testECALAndPSByRecHit(eeclus, psclus, false);
+//     }
 
-    void ElePFAnalyzer::PSforTMVA(XYZTLorentzVector mom,XYZTLorentzVector pos ){
-
-      BaseParticlePropagator OutParticle(RawParticle(mom,pos)
-					 ,0.,0.,B_.z()) ;
-
-      OutParticle.propagateToPreshowerLayer1(false);
-      if (OutParticle.getSuccess()!=0){
-	//   GlobalPoint v1=ps1TSOS.globalPosition();
-	math::XYZPoint v1=math::XYZPoint(OutParticle.vertex());
-	if ((v1.Rho() >=
-	     PFGeometry::innerRadius(PFGeometry::PS1)) &&
-	    (v1.Rho() <=
-	     PFGeometry::outerRadius(PFGeometry::PS1))) {
-	  float enPScl1=0;
-	  float chi1=100;
-	  vector<PFCluster>::const_iterator ips;
-	  for (ips=ps1Clus.begin(); ips!=ps1Clus.end();ips++){
-	    float ax=((*ips).position().x()-v1.x())/0.114;
-	    float ay=((*ips).position().y()-v1.y())/2.43;
-	    float pschi= sqrt(ax*ax+ay*ay);
-	    if (pschi<chi1){
-	      chi1=pschi;
-	      enPScl1=(*ips).energy();
-	    }
-	  }
-	  ps1En=enPScl1;
-	  ps1chi=chi1;
-
-
-	  OutParticle.propagateToPreshowerLayer2(false);
-	  if (OutParticle.getSuccess()!=0){
-	    math::XYZPoint v2=math::XYZPoint(OutParticle.vertex());
-	    if ((v2.Rho() >=
-		 PFGeometry::innerRadius(PFGeometry::PS2)) &&
-		(v2.Rho() <=
-		 PFGeometry::outerRadius(PFGeometry::PS2))){
-	      float enPScl2=0;
-	      float chi2=100;
-	      for (ips=ps2Clus.begin(); ips!=ps2Clus.end();ips++){
-		float ax=((*ips).position().x()-v2.x())/1.88;
-		float ay=((*ips).position().y()-v2.y())/0.1449;
-		float pschi= sqrt(ax*ax+ay*ay);
-		if (pschi<chi2){
-		  chi2=pschi;
-		  enPScl2=(*ips).energy();
-		}
-	      }
-	      ps2En=enPScl2;
-	      ps2chi=chi2;
-	    }
-	  }
-	}
-      }
-    }
-
-    bool ElePFAnalyzer::IsIsolated(float charge, float P,
-				   math::XYZPointF myElecTrkEcalPos,
-				   const PFClusterCollection &ecalColl,
-				   const PFClusterCollection &hcalColl){
-
-      double myHCALenergy3x3=0.;
-      double myStripClusterE=0.;
-      //  reco::TrackRef myElecTrk;
-      if (fabs(myElecTrkEcalPos.z())<1. && myElecTrkEcalPos.x()<1. && myElecTrkEcalPos.y()<1. ) return false; 
-  
-      PFClusterCollection::const_iterator hc=hcalColl.begin();
-      PFClusterCollection::const_iterator hcend=hcalColl.end();
-      for (;hc!=hcend;++hc){
-	math::XYZPoint clusPos = hc->position();
-	double en = hc->energy();
-	double deltaR = ROOT::Math::VectorUtil::DeltaR(myElecTrkEcalPos,clusPos);
-	if (deltaR<HcalIsolWindow_) {
-	  myHCALenergy3x3 += en;
-      
-	}
-      }
-
-      PFClusterCollection::const_iterator ec=ecalColl.begin();
-      PFClusterCollection::const_iterator ecend=ecalColl.end();
-      for (;ec!=ecend;++ec){
-	math::XYZPoint clusPos = ec->position();
-	double en = ec->energy();
-	double deltaPhi = ROOT::Math::VectorUtil::DeltaPhi(myElecTrkEcalPos,clusPos);
-	double deltaEta = abs(myElecTrkEcalPos.eta()-clusPos.eta());
-	double deltaPhiOverQ = deltaPhi/charge;
-	if (en >= EcalStripSumE_minClusEnergy_ && deltaEta<EcalStripSumE_deltaEta_ && deltaPhiOverQ > EcalStripSumE_deltaPhiOverQ_minValue_ 
-	    && deltaPhiOverQ < EcalStripSumE_deltaPhiOverQ_maxValue_) { 
-	  myStripClusterE += en;
-	}
-      }  
-  
-      double EoP=myStripClusterE/P;
-      double HoP=myHCALenergy3x3/P;
-
-      return ((EoP>minEoverP_)&&(EoP<2.5) && (HoP<maxHoverP_))?true:false;
-    }
 
     void ElePFAnalyzer::fillPreIdRefValueMap( Handle<TrackCollection> tracks,
 					      const edm::OrphanHandle<reco::PreIdCollection>& preidhandle,
