@@ -1,5 +1,3 @@
-//new
-
 // -*- C++ -*-
 //
 // Package:    ElePFAnalyzer
@@ -167,10 +165,6 @@ private:
   bool isaBhadron(int pdgId);
   bool isaDhadron(int pdgId);
   int parent(const reco::Candidate& mom);
-  //  int getBin( float );
-  //  int getBin( float, float );
-  //   double testPreshowerDistance(PFCluster eeclus,
-  // 			       PFCluster psclus);
 
   void fillPreIdRefValueMap( edm::Handle<reco::TrackCollection> tkhandle,
 			     const edm::OrphanHandle<reco::PreIdCollection>&,
@@ -225,9 +219,6 @@ private:
   std::vector<reco::PFCluster> ps2Clus;
   Bool_t useNuclear_;
 
-  //  float thr[150];
-  //  float thrPS[20];
-
   ///ISOLATION REQUEST AS DONE IN THE TAU GROUP
   double HcalIsolWindow_;
   double EcalStripSumE_minClusEnergy_;
@@ -236,106 +227,6 @@ private:
   double EcalStripSumE_deltaPhiOverQ_maxValue_;
   double minEoverP_;
   double maxHoverP_;
-
-  // ============ Testing code for seeds ===============
-  TTree *seeds;
-  int g_pdgid;
-  int g_parentid;
-  float g_pt;
-  float g_eta;
-  float g_phi;
-  float g_dre;
-  int   seedMatch;
-  float s_drGen;
-  float s_trkPt;
-  float s_trkEta;
-  float s_trkPhi;
-  int trackMatch;
-  float t_sharedHits;
-  float t_drGen;
-  float t_pt;
-  float t_pTOB;
-  float t_eta;
-  float t_phi;
-  float t_deta;
-  float t_dphi;
-  float t_deta_old;
-  float t_dphi_old;
-  int   t_nhits;
-  float t_ep;
-  float t_nchi2;
-  float t_ecalDist;
-  float t_ecalChi;
-  float t_dptGSF;
-  float t_chiRatio;
-  float t_chiReduced;
-
-  TTree *bdtTree, *EventInfo;
-  // variables for bdtTree:
-  float gen_pt_;
-  float gen_phi_;
-  float gen_eta_;
-  int   gen_pdgId_;
-  int   gen_parentId_;
-  float gen_dRElectron_;
-  float sim_dRElectron_;
-  int   gen_match_;
-  float trk_pt_;
-  float trk_pTOB_;
-  float trk_eta_;
-  float trk_phi_;
-  float trk_chi2_;
-  float trk_ndof_;
-  float trk_nchi2_;
-  float trk_dpt_;
-  float trk_dptGSF_;
-  float trk_nhits_;
-  int   trk_nmatched_;
-  int   trk_quality_;
-  float trk_ep_;
-  //  float trk_epCorr_;
-  float trk_dr_;
-
-  float trk_ecalDist_;
-  float trk_ecalDeta_;
-  float trk_ecalDphi_;
-  float trk_ecalDetaNew_;
-  float trk_ecalDphiNew_;
-  float trk_ecalChi_;
-  float trk_chiRatio_;
-  float trk_chiReduced_;
-  float ecal_e_;
-  //   int   ecal_ps_;
-  //   float ecal_ps1e_;
-  //   float ecal_ps2e_;
-
-  TFile *file;
-
-  Int_t nEle;
-  Int_t nPion;
-  Int_t nSeed;
-  std::vector<Float_t> gen_ele_pt;
-  std::vector<Float_t> gen_ele_eta;
-  std::vector<Float_t> gen_ele_phi;
-  std::vector<Int_t>   gen_ele_status;
-  std::vector<Int_t>   gen_ele_id;
-  std::vector<Int_t>   gen_ele_isFromMom;
-
-  std::vector<Float_t> gen_pion_pt;
-  std::vector<Float_t> gen_pion_eta;
-  std::vector<Float_t> gen_pion_phi;
-  std::vector<Int_t>   gen_pion_status;
-  std::vector<Int_t>   gen_pion_id;
-  std::vector<Int_t>   gen_pion_isFromMom;
-
-  std::vector<Bool_t> isTrackerDriven;
-  std::vector<Bool_t> isEcalDriven;
-  std::vector<Float_t> seed_pt;
-  std::vector<Float_t> seed_eta;
-  std::vector<Float_t> seed_phi;
-  std::vector<Float_t> seed_trkPt;
-  std::vector<Float_t> seed_trkEta;
-  std::vector<Float_t> seed_trkPhi;
 
   std::string filename_;
   ///B field
@@ -380,104 +271,6 @@ ElePFAnalyzer::ElePFAnalyzer(const edm::ParameterSet& iConfig):
   maxEta_           = iConfig.getParameter<double>("MaxEta");
   usePreshower_     = iConfig.getParameter<bool>("UsePreShower");
   filename_         = iConfig.getParameter<string>( "filename" );
-
-  file = new TFile(filename_.c_str(), "RECREATE");
-  seeds = new TTree("seeds", "seeds");
-  seeds->Branch("g_pdgid", &g_pdgid, "g_pdgid/I");
-  seeds->Branch("g_parentid", &g_parentid, "g_parentid/I");
-  seeds->Branch("g_pt", &g_pt, "g_pt/F");
-  seeds->Branch("g_eta", &g_eta, "g_eta/F");
-  seeds->Branch("g_phi", &g_phi, "g_phi/F");
-  seeds->Branch("g_dre", &g_dre, "g_dre/F");
-  seeds->Branch("seedMatch", &seedMatch, "seedMatch/I");
-  seeds->Branch("s_drGen", &s_drGen, "s_drGen/F");
-  seeds->Branch("s_trkPt", &s_trkPt, "s_trkPt/F");
-  seeds->Branch("s_trkPhi", &s_trkPhi, "s_trkPhi/F");
-  seeds->Branch("s_trkEta", &s_trkEta, "s_trkEta/F");
-  seeds->Branch("trackMatch", &trackMatch, "trackMatch/I");
-  seeds->Branch("t_sharedHits", &t_sharedHits, "t_sharedHits/F");
-  seeds->Branch("t_drGen", &t_drGen, "t_drGen/F");
-  seeds->Branch("t_pt", &t_pt, "t_pt/F");
-  seeds->Branch("t_pTOB", &t_pTOB, "t_pTOB/F");
-  seeds->Branch("t_eta", &t_eta, "t_eta/F");
-  seeds->Branch("t_phi", &t_phi, "t_phi/F");
-  seeds->Branch("t_deta", &t_deta, "t_deta/F");
-  seeds->Branch("t_dphi", &t_dphi, "t_dphi/F");
-  seeds->Branch("t_deta_old", &t_deta_old, "t_deta_old/F");
-  seeds->Branch("t_dphi_old", &t_dphi_old, "t_dphi_old/F");
-  seeds->Branch("t_nhits", &t_nhits, "t_nhits/I");
-  seeds->Branch("t_ep", &t_ep, "t_ep/F");
-  seeds->Branch("t_nchi2", &t_nchi2, "t_nchi2/F");
-  seeds->Branch("t_ecalDist", &t_ecalDist, "t_ecalDist/F");
-  seeds->Branch("t_ecalChi", &t_ecalChi, "t_ecalChi/F");
-  seeds->Branch("t_dptGSF", &t_dptGSF, "t_dptGSF/F");
-  seeds->Branch("t_chiRatio", &t_chiRatio, "t_chiRatio/F");
-  seeds->Branch("t_chiReduced", &t_chiReduced, "t_chiReduced/F");
-
-  bdtTree = new TTree("bdtTree", "bdtTree");
-  bdtTree->Branch("gen_pt",       &gen_pt_,       "gen_pt/F");
-  bdtTree->Branch("gen_phi",      &gen_phi_,      "gen_phi/F");
-  bdtTree->Branch("gen_eta",      &gen_eta_,      "gen_eta/F");
-  bdtTree->Branch("gen_pdgId",    &gen_pdgId_,    "gen_pdgId/I");
-  bdtTree->Branch("gen_parentId", &gen_parentId_, "gen_parentId/I");
-  bdtTree->Branch("gen_dRElectron", &gen_dRElectron_, "gen_dRElectron/F");
-  bdtTree->Branch("sim_dRElectron", &sim_dRElectron_, "sim_dRElectron/F");
-
-  bdtTree->Branch("gen_match",    &gen_match_,    "gen_match/I");
-
-  bdtTree->Branch("trk_pt",       &trk_pt_,       "trk_pt/F");
-  bdtTree->Branch("trk_pTOB",     &trk_pTOB_,     "trk_pTOB/F");
-  bdtTree->Branch("trk_phi",      &trk_phi_,      "trk_phi/F");
-  bdtTree->Branch("trk_eta",      &trk_eta_,      "trk_eta/F");
-  bdtTree->Branch("trk_chi2",     &trk_chi2_,     "trk_chi2/F");
-  bdtTree->Branch("trk_ndof",     &trk_ndof_,     "trk_ndof/F");
-  bdtTree->Branch("trk_nchi2",    &trk_nchi2_,    "trk_nchi2/F");
-  bdtTree->Branch("trk_dpt",      &trk_dpt_,      "trk_dpt/F");
-  bdtTree->Branch("trk_dptGSF",   &trk_dptGSF_,   "trk_dptGSF/F");
-  bdtTree->Branch("trk_nhits",    &trk_nhits_,    "trk_nhits/F");
-  bdtTree->Branch("trk_nmatched", &trk_nmatched_, "trk_nmatched/I");
-  bdtTree->Branch("trk_quality",  &trk_quality_,  "trk_quality/I");
-  bdtTree->Branch("trk_ep",       &trk_ep_,       "trk_ep/F");
-  //  bdtTree->Branch("trk_epCorr",   &trk_epCorr_,   "trk_epCorr/F");
-  bdtTree->Branch("trk_dr",       &trk_dr_,       "trk_dr/F");
-  bdtTree->Branch("trk_ecalDist", &trk_ecalDist_, "trk_ecalDist/F");
-  bdtTree->Branch("trk_ecalDphi", &trk_ecalDphi_, "trk_ecalDphi/F");
-  bdtTree->Branch("trk_ecalDeta", &trk_ecalDeta_, "trk_ecalDeta/F");
-  bdtTree->Branch("trk_ecalChi",  &trk_ecalChi_, "trk_ecalChi/F");
-  bdtTree->Branch("trk_chiRatio", &trk_chiRatio_, "trk_chiRatio/F");
-  bdtTree->Branch("trk_chiReduced", &trk_chiReduced_, "trk_chiReduced/F");
-
-  bdtTree->Branch("ecal_e",  &ecal_e_, "ecal_e/F");
-  //   bdtTree->Branch("ecal_ps", &ecal_ps_, "ecal_ps/I");
-  //   bdtTree->Branch("ecal_ps1e", &ecal_ps1e_, "ecal_ps1e/F");
-  //   bdtTree->Branch("ecal_ps2e", &ecal_ps2e_, "ecal_ps2e/F");
-
-  EventInfo = new TTree("EventInfo", "EventInfo");
-  EventInfo->Branch("nEle", &nEle, "nEle/I");
-  EventInfo->Branch("nPion", &nPion, "nPion/I");
-  EventInfo->Branch("nSeed", &nSeed, "nSeed/I");
-  EventInfo->Branch("gen_ele_pt", &gen_ele_pt);
-  EventInfo->Branch("gen_ele_eta", &gen_ele_eta);
-  EventInfo->Branch("gen_ele_phi", &gen_ele_phi);
-  EventInfo->Branch("gen_ele_status", &gen_ele_status);
-  EventInfo->Branch("gen_ele_id", &gen_ele_id);
-  EventInfo->Branch("gen_ele_isFromMom", &gen_ele_isFromMom);
-
-  EventInfo->Branch("gen_pion_pt", &gen_pion_pt);
-  EventInfo->Branch("gen_pion_eta", &gen_pion_eta);
-  EventInfo->Branch("gen_pion_phi", &gen_pion_phi);
-  EventInfo->Branch("gen_pion_status", &gen_pion_status);
-  EventInfo->Branch("gen_pion_id", &gen_pion_id);
-  EventInfo->Branch("gen_pion_isFromMom", &gen_pion_isFromMom);
-
-  EventInfo->Branch("TrackerDrivenSeed", &isTrackerDriven);
-  EventInfo->Branch("EcalDrivenSeed", &isEcalDriven);
-  EventInfo->Branch("seed_pt", &seed_pt);
-  EventInfo->Branch("seed_eta", &seed_eta);
-  EventInfo->Branch("seed_phi", &seed_phi);
-  EventInfo->Branch("seed_trkPt", &seed_trkPt);
-  EventInfo->Branch("seed_trkEta", &seed_trkEta);
-  EventInfo->Branch("seed_trkPhi", &seed_trkPhi);
 
 }
 
@@ -558,13 +351,6 @@ void ElePFAnalyzer::findRecoTracks(Handle<TrackingParticleCollection> TPCollecti
 	  Track track2 = *tr;
 	  float nHitsRatio2 = it->second;
 
-	  /* this is for check
-	  float r1 = sqrt(track1.innerPosition().x()*track1.innerPosition().x() +
-			  track1.innerPosition().y()*track1.innerPosition().y());
-	  float r2 = sqrt(track2.innerPosition().x()*track2.innerPosition().x() +
-			  track2.innerPosition().y()*track2.innerPosition().y());
-	  cout << "which is closer? " << r1 << '\t' << r2 << endl;
-	  */
 	  bool sameLayer = false;
 	  bool result = isInnerMost(track1, track2, sameLayer);
 	  Track finalTrack;
@@ -633,8 +419,6 @@ void ElePFAnalyzer::findRecoTracks(Handle<TrackingParticleCollection> TPCollecti
     }
   }
 }
-
-
 // ------------ method called for each event  ------------
 //0 - not from W, Z, B, or C
 //1 - W or Z
@@ -797,7 +581,6 @@ int ElePFAnalyzer::tracer(const reco::Candidate& genCand) {
 		if (mom3.numberOfMothers() != 0 ){
 		  const reco::Candidate& mom4 = *mom3.mother(0);
 		  parentId = parent(mom4);
-		  //		  std::cout << __LINE__ << std::endl;
 		}
 	      }
 	    }
@@ -851,74 +634,12 @@ int ElePFAnalyzer::parent(const reco::Candidate& mom){
   return 0;
 }
 
-void ElePFAnalyzer::clearBDTTreeVariables() {
-
-  // clear up the bdtTree variables
-  gen_pt_       = 0;
-  gen_phi_      = 0;
-  gen_eta_      = 0;
-  gen_pdgId_    = 0;
-  gen_parentId_ = 0;
-  gen_dRElectron_ = 1000;
-  sim_dRElectron_ = 1000; 
-  gen_match_    = 0;
-  trk_pt_       = 0;
-  trk_pTOB_     = 0;
-  trk_eta_      = 0;
-  trk_phi_      = 0;
-  trk_chi2_     = 0;
-  trk_ndof_     = 0;
-  trk_nchi2_    = 0;
-  trk_dpt_      = 0;
-  trk_dptGSF_   = 1000;  
-  trk_nhits_    = 0;
-  trk_nmatched_ = 0;
-  trk_quality_  = 0;
-  trk_ep_       = 1000;
-  //  trk_epCorr_   = 1000;
-  trk_dr_       = 1000;
-  trk_ecalDist_ = 1000;
-  trk_ecalDphi_ = 1000;
-  trk_ecalDeta_ = 1000;
-  trk_ecalDphiNew_ = 1000;
-  trk_ecalDetaNew_ = 1000;
-  trk_ecalChi_ = 1000;
-  trk_chiRatio_  = 1000;
-  trk_chiReduced_ = 1000;
-
-  ecal_e_ = 0;
-  //   ecal_ps_ = 0;
-  //   ecal_ps1e_ = 0;
-  //   ecal_ps2e_ = 0;
-
-}
 
 void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
   using namespace std;
   using namespace reco;
-
-  gen_ele_pt.clear();
-  gen_ele_eta.clear();
-  gen_ele_phi.clear();
-  gen_ele_status.clear();
-  gen_ele_id.clear();
-  gen_ele_isFromMom.clear();
-  gen_pion_pt.clear();
-  gen_pion_eta.clear();
-  gen_pion_phi.clear();
-  gen_pion_status.clear();
-  gen_pion_id.clear();
-  gen_pion_isFromMom.clear();
-  isTrackerDriven.clear();
-  isEcalDriven.clear();
-  seed_pt.clear();
-  seed_eta.clear();
-  seed_phi.clear();
-  seed_trkPt.clear();
-  seed_trkEta.clear();
-  seed_trkPhi.clear();
 
   // Handles, collections etc. ===========================================
   edm::ESHandle<TrackAssociatorBase> theHitsAssociator;
@@ -1027,297 +748,12 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     }
     if (SeedRef->ctfTrack().isNull()){
       isTrackerDrivenForThisSeed = false;
-      seed_trkEta.push_back(1000);
-      seed_trkPhi.push_back(1000);
-      seed_trkPt.push_back(1000);
-    } else {
-      seed_trkEta.push_back(SeedRef->ctfTrack()->eta());
-      seed_trkPhi.push_back(SeedRef->ctfTrack()->phi());
-      seed_trkPt.push_back(SeedRef->ctfTrack()->pt());
     }
     isTrackerDriven.push_back(isTrackerDrivenForThisSeed);
     isEcalDriven.push_back(isEcalDrivenForThisSeed);
     ++nSeed;
   }
 
-  // ================Testing code for seeds =============================
-
-  // Save all the gen-level electrons
-  vector<unsigned int> iGenElectrons;
-  for( size_t i = 0; i < genParticles_->size(); ++i ){
-    const GenParticle& genCand = (*genParticles_)[i];
-    bool electron = abs(genCand.pdgId()) == 11;
-    if ( electron && genCand.pt() >= 2.0 ) {
-      int parentId = tracer(genCand);
-      if ( parentId == 2 || parentId == 3  ) // consider only electrons from b/c to be avoided
-	iGenElectrons.push_back(i);
-    }
-  }
-
-  // this is for seeds
-  int nTotal = 0;
-  int nFixed = 0;
-  int nMatched = 0;
-  for( size_t i = 0; i < genParticles_->size(); ++i ){
-    const GenParticle& genCand = (*genParticles_)[i];
-    if ( genCand.pt() < 2.0 ) continue;
-    if ( abs(genCand.pdgId()) != 11 && abs(genCand.pdgId()) != 211 ) continue;
-
-    g_pdgid = genCand.pdgId();
-    g_parentid = tracer(genCand);
-    g_pt = genCand.pt();
-    g_eta = genCand.eta();
-    g_phi = genCand.phi();
-    
-    float mindR2 = 1000;
-    for( vector<unsigned int>::iterator it = iGenElectrons.begin(); it != iGenElectrons.end(); ++it ) {
-      if (*it == i) continue;
-      const GenParticle& electron = (*genParticles_)[*it];
-      float dphi = acos(cos(genCand.phi() - electron.phi()));
-      float deta = genCand.eta() - electron.eta();
-      float dr2 = dphi*dphi + deta*deta;
-      if ( dr2 < mindR2 ) mindR2 = dr2;
-    }
-    g_dre = sqrt(mindR2);
-
-    s_drGen = 1000;
-    for ( unsigned int iseed = 0; iseed < eleSeeds.size(); ++iseed ) {
-      ElectronSeedRef SeedRef(seedelectrons, iseed);
-      if ( SeedRef->ctfTrack().isNull() ) continue;
-      Ref<TrackCollection> matchedTrack = SeedRef->ctfTrack();
-      float tmpPhi = matchedTrack->phi();
-      float tmpEta = matchedTrack->eta();
-      float deta = tmpEta - g_eta;
-      float dphi = acos(cos(tmpPhi - g_phi));
-      float dr2 = sqrt(dphi*dphi + deta*deta);
-      if ( dr2 < s_drGen) {
-	s_drGen = dr2;
-	s_trkEta = tmpEta;
-	s_trkPhi = tmpPhi;
-	s_trkPt = matchedTrack->pt();
-      }
-    }
-
-    // loop over tracks
-    Track track;
-    float sharedHits = 0;
-    float dR = 100;
-    int indexTrack;
-    Track trRefToBase;
-    bool result = findMatch(genCand, TPCollectionH, q,
-                            track, indexTrack, dR, sharedHits);
-    reco::TrackBase::TrackQuality trackQuality = TrackBase::qualityByName("highPurity");
-    result = result && Tk[indexTrack].quality(trackQuality);
-
-    if ( !result ) {
-      trackMatch = 0;
-      t_drGen = 1000;
-      t_pt = -1;
-      t_eta = 1000;
-      t_phi = 1000;
-      t_nchi2 = 1000;
-      t_nhits = -1;
-      t_sharedHits = -1;
-      t_deta = 2000;
-      t_dphi = 2000;
-      t_deta_old = 2000;
-      t_dphi_old = 2000;
-      t_ecalDist = 1000;
-      t_ecalChi = 1000;
-      t_ep = 1000;
-      t_dptGSF = 1000;
-      t_chiRatio = 1000;
-      t_chiReduced = 1000;
-      
-    } else { // matched to a track
-      trackMatch = 1;
-
-      t_drGen = sqrt((track.eta() - genCand.eta())*(track.eta() - genCand.eta()) +
-		     acos(cos(track.phi() - genCand.phi()))*acos(cos(track.phi() - genCand.phi())));
-      t_pt = track.pt();
-      t_pTOB = Tj[indexTrack].lastMeasurement().updatedState().globalMomentum().mag();
-      t_eta = track.eta();
-      t_phi = track.phi();
-      t_nchi2 = track.normalizedChi2();
-      t_nhits = track.found();
-      t_sharedHits = sharedHits;
-
-      // matching of a track to ECAL - new method
-      TrackRef trackRef(theTrackCollection, indexTrack);
-      reco::PFRecTrack pfrectrack( trackRef->charge(), 
-				   reco::PFRecTrack::KF, 
-				   indexTrack, trackRef);
-      Trajectory FakeTraj;
-      pfTkTransformer_->addPoints(pfrectrack, *trackRef, FakeTraj);
-      pfrectrack.calculatePositionREP();
-      const reco::PFTrajectoryPoint& atECAL = pfrectrack.extrapolatedPoint(reco::PFTrajectoryPoint::ECALShowerMax);
-
-      t_deta = 1000;
-      t_dphi = 1000;
-      if ( atECAL.isValid() ) {
-	float minDist = 1000;
-	PFCluster matchedCluster;
-	for(vector<PFCluster>::const_iterator aClus = basClus.begin();
-	    aClus != basClus.end(); ++aClus) {
-	  
-	  PFCluster clust = *aClus;
-	  clust.calculatePositionREP();
-	  float dist = LinkByRecHit::testTrackAndClusterByRecHit(pfrectrack, clust);
-	  
-	  if ( dist > 0. && dist < minDist ){
-	    minDist = dist;
-	    matchedCluster = clust;
-	  }
-	}//loop over for aClus
-	
-	if ( minDist != 1000 ) {
-	  t_ecalDist = minDist; 
-	  matchedCluster.calculatePositionREP();
-	  
-	  float eta_ecalentrance = atECAL.positionREP().Eta(); // cluster position
-	  float phi_ecalentrance = atECAL.positionREP().Phi();
-	  
-	  t_deta = eta_ecalentrance - matchedCluster.position().eta();
-	  t_dphi = acos(cos(phi_ecalentrance - matchedCluster.position().phi()));
-
-	}//loop over minDist
-      }//loop over for atECAL
-      
-      // matching of a track to ECAL - old method
-      float pfmass=  0.0005;
-      float pfoutenergy=sqrt((pfmass*pfmass)+Tk[indexTrack].outerMomentum().Mag2());
-      XYZTLorentzVector mom =XYZTLorentzVector(Tk[indexTrack].outerMomentum().x(),
-					       Tk[indexTrack].outerMomentum().y(),
-					       Tk[indexTrack].outerMomentum().z(),
-					       pfoutenergy);
-      XYZTLorentzVector pos =   XYZTLorentzVector(Tk[indexTrack].outerPosition().x(),
-						  Tk[indexTrack].outerPosition().y(),
-						  Tk[indexTrack].outerPosition().z(),
-						  0.);
-      
-      BaseParticlePropagator theOutParticle = 
-	BaseParticlePropagator( RawParticle(mom,pos),
-				0,0,B_.z());
-      theOutParticle.setCharge(Tk[indexTrack].charge());
-      
-      theOutParticle.propagateToEcalEntrance(false);
-      
-      
-      float toteta=1000;
-      float totphi=1000;
-      float dr=1000;
-      float EP = 1000;
-      float EE = 0;
-      float feta = 0;
-      math::XYZPointF ElecTrkEcalPos(0,0,0);
-      PFClusterRef clusterRef;
-      math::XYZPoint meanShowerSaved;
-      if(theOutParticle.getSuccess()!=0){
-	ElecTrkEcalPos=math::XYZPointF(theOutParticle.vertex().x(),
-				       theOutParticle.vertex().y(),
-				       theOutParticle.vertex().z());
-	bool isBelowPS=(fabs(theOutParticle.vertex().eta())>1.65) ? true :false;	
-	
-	unsigned clusCounter=0;
-	float max_ee = 0;	
-	for(vector<PFCluster>::const_iterator aClus = basClus.begin();
-	    aClus != basClus.end(); aClus++,++clusCounter) {
-	  
-	  double ecalShowerDepth
-	    = PFCluster::getDepthCorrection(aClus->energy(),
-					    isBelowPS,
-					    false);
-	  
-	  math::XYZPoint meanShower=math::XYZPoint(theOutParticle.vertex())+
-	    math::XYZTLorentzVector(theOutParticle.momentum()).Vect().Unit()*ecalShowerDepth;	
-	  
-	  float etarec=meanShower.eta();
-	  float phirec=meanShower.phi();
-	  float tmp_ep=aClus->energy()/t_pTOB;
-	  float tmp_phi=fabs(aClus->position().phi()-phirec);
-	  if (tmp_phi>TMath::TwoPi()) tmp_phi-= TMath::TwoPi();
-	  float tmp_dr=sqrt(pow(tmp_phi,2)+
-			    pow((aClus->position().eta()-etarec),2));
-	  
-	  if ((tmp_dr<dr)&&(tmp_ep>minEp_)&&(tmp_ep<maxEp_)){
-	    dr=tmp_dr;
-
-	    if(dr < 0.2){
-	      if(aClus->correctedEnergy() > max_ee){
-		max_ee = aClus->correctedEnergy();
-
-		toteta=aClus->position().eta()-etarec;
-		totphi=tmp_phi;
-		EP=tmp_ep;
-		EE=aClus->energy();
-		feta= aClus->position().eta();
-		clusterRef = PFClusterRef(theECPfClustCollection,clusCounter);
-		meanShowerSaved = meanShower;
-	      }
-	    }
-	  }
-	}
-      }
-      
-      t_ep = EP;
-      double ecaletares = resMapEtaECAL_->GetBinContent(resMapEtaECAL_->FindBin(feta,EE));
-      double ecalphires = resMapPhiECAL_->GetBinContent(resMapPhiECAL_->FindBin(feta,EE));
-      
-      // geometrical compatibility
-      float chieta = (toteta!=1000) ? toteta/ecaletares : toteta;
-      float chiphi = (totphi!=1000) ? totphi/ecalphires : totphi;
-      float chichi = sqrt(chieta*chieta + chiphi*chiphi); 
-      t_ecalChi = chichi;
-      
-      t_dphi_old = fabs(totphi);
-      t_deta_old = fabs(toteta);
-      
-      Trajectory::ConstRecHitContainer tmp;
-      TrajectorySeed Seed = (*trackRef->seedRef());
-      
-      Trajectory::ConstRecHitContainer hits=Tj[indexTrack].recHits();
-      for (int ih=hits.size()-1; ih>=0; ih--)  tmp.push_back(hits[ih]);
-      vector<Trajectory> FitTjs=(fitter_.product())->fit(Seed,
-							 tmp,
-							 Tj[indexTrack].lastMeasurement().updatedState());
-      
-      if(FitTjs.size()>0){
-	if(FitTjs[0].isValid()){
-	  vector<Trajectory> SmooTjs=(smoother_.product())->trajectories(FitTjs[0]);
-	  if(SmooTjs.size()>0){
-	    if(SmooTjs[0].isValid()){
-	      //Track refitted with electron hypothesis
-	      float pt_out = SmooTjs[0].firstMeasurement().updatedState().globalMomentum().perp();
-	      float pt_in = SmooTjs[0].lastMeasurement().updatedState().globalMomentum().perp();
-	      float dpt = (pt_in>0) ? fabs(pt_out-pt_in)/pt_in : 0.;
-	      t_dptGSF = dpt;
-	      t_chiRatio = SmooTjs[0].chiSquared()/Tj[indexTrack].chiSquared();
-	      t_chiReduced = t_chiRatio*track.normalizedChi2();
-	      
-	    }
-	  }//SmooTjs.size
-	}//loop over for FitTjs.isValid()
-      }//loop over for FitTjs.size()
-  
-      /*
-      // debug
-      if ( abs(g_pdgid)==211 && t_pt > 2 && t_pt < 6 && fabs(t_eta) < 12 ) { // gen-level + matched to pion
-      ++nTotal;
-      if ( t_nhits > 10 && t_ecalChi < 10 && t_ep > 0.7 ) { // filter1
-      ++nMatched;
-      float deta = t_eta - s_trkEta;
-      float dphi = acos(cos(s_trkPhi - t_phi));
-      float dr2 = dphi*dphi + deta*deta;
-      cout << sqrt(dr2) << endl;
-      if ( sqrt(dr2) < 0.01 ) ++nFixed;
-      }
-      }
-      */
-    } // match is found
-    seeds->Fill();
-  } // loop over gen-level particles
-  cout << nTotal << "\t" << nMatched << "\t" << nFixed << endl;  
-  
   // ======================================================================
   // Main loop: over gen particles in the event
   nEle = 0;
@@ -1570,11 +1006,6 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       ecal_e_ = EE;
       trk_ep_ = EE/trk_pTOB_;
 
-      //       if ( ecal_ps_ != 0 ) 
-      // 	trk_epCorr_ = (EE + ecal_ps1e_ + ecal_ps2e_)/trk_pTOB_;
-      //       else
-      // 	trk_epCorr_ = EE/trk_pTOB_;
-
       Trajectory::ConstRecHitContainer tmp;
       TrajectorySeed Seed = (*trackRef->seedRef());
       
@@ -1621,27 +1052,13 @@ void ElePFAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	    matchedCluster = clust;
 	  }
 	}//loop over for aClus
-      
-	if ( minDist != 1000 ) {
-	  trk_ecalDist_ = minDist; 
-	  matchedCluster.calculatePositionREP();
-
-	  float eta_ecalentrance = atECAL.positionREP().Eta(); // cluster position
-	  float phi_ecalentrance = atECAL.positionREP().Phi();
-	  
-	  trk_ecalDetaNew_ = eta_ecalentrance - matchedCluster.position().eta();
-	  trk_ecalDphiNew_ = acos(cos(phi_ecalentrance - matchedCluster.position().phi()));
-	}
       }//loop over for atECAL
     }//loop over result
     else {
       //cout << endl;
       ;
     }
-    bdtTree->Fill();
   }//loop over genparticle
-  EventInfo->Fill();
-  // end of analyze
 }
 
 
