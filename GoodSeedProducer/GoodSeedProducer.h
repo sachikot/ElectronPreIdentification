@@ -145,6 +145,7 @@ class GoodSeedProducer : public edm::EDProducer {
       ///VARIABLES NEEDED FOR TMVA
       float eP,eta,pt,nhit,dpt,chired,chiRatio;
       float chikfred,trk_ecalDeta,trk_ecalDphi;                      
+      double Min_dr_;
 
       ///USE OF TMVA 
       bool useTmva_;

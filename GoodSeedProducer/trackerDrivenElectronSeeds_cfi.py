@@ -44,7 +44,8 @@ trackerDrivenElectronSeeds = cms.EDProducer("GoodSeedProducer",
     UsePreShower =cms.bool(False),
     PreIdLabel = cms.string('preid'),
     ProducePreId = cms.untracked.bool(True),
-    PtThresholdSavePreId = cms.untracked.double(1.0)  
+    PtThresholdSavePreId = cms.untracked.double(1.0),
+    Min_dr = cms.double(0.2)
 )
 
 

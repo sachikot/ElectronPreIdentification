@@ -117,6 +117,8 @@ GoodSeedProducer::GoodSeedProducer(const ParameterSet& iConfig):
   trackQuality_=TrackBase::qualityByName(iConfig.getParameter<std::string>("TrackQuality"));
 
   useTmva_= iConfig.getUntrackedParameter<bool>("UseTMVA",false);
+
+  Min_dr_ = iConfig.getParameter<double>("Min_dr");
 }
 
 
@@ -174,7 +176,7 @@ GoodSeedProducer::produce(Event& iEvent, const EventSetup& iSetup)
   vector<PFCluster>::const_iterator iklus;
   for (iklus=theECPfClustCollection.product()->begin();
        iklus!=theECPfClustCollection.product()->end();
-       iklus++){
+       ++iklus){
     if((*iklus).correctedEnergy()>clusThreshold_) basClus.push_back(*iklus);
   }
 
@@ -187,7 +189,7 @@ GoodSeedProducer::produce(Event& iEvent, const EventSetup& iSetup)
   iEvent.getByToken(pfCLusTagPSLabel_,thePSPfClustCollection);
 
   //Vector of track collections
-  for (unsigned int istr=0; istr<tracksContainers_.size();istr++){
+  for (unsigned int istr=0; istr<tracksContainers_.size();++istr){
     
     //Track collection
     Handle<TrackCollection> tkRefCollection;
@@ -204,7 +206,7 @@ GoodSeedProducer::produce(Event& iEvent, const EventSetup& iSetup)
                                 <<Tj.size();
 
     //loop over the track collection
-    for(unsigned int i=0;i<Tk.size();i++){		
+    for(unsigned int i=0;i<Tk.size();++i){		
       if (useQuality_ &&
 	  (!(Tk[i].quality(trackQuality_)))) continue;
       
@@ -262,7 +264,7 @@ GoodSeedProducer::produce(Event& iEvent, const EventSetup& iSetup)
 	    unsigned clusCounter=0;
 	    float max_ee = 0;
 	    for(vector<PFCluster>::const_iterator aClus = basClus.begin();
-		aClus != basClus.end(); aClus++,++clusCounter) {
+		aClus != basClus.end(); ++aClus,++clusCounter) {
 	  
 	      double ecalShowerDepth
 		= PFCluster::getDepthCorrection(aClus->correctedEnergy(),
@@ -277,15 +279,15 @@ GoodSeedProducer::produce(Event& iEvent, const EventSetup& iSetup)
 	      float tmp_ep=aClus->correctedEnergy()/PTOB;
 	      float tmp_phi=fabs(aClus->position().phi()-phirec);
 	      if (tmp_phi>TMath::TwoPi()) tmp_phi-= TMath::TwoPi();
-	      float tmp_dr=sqrt(pow(tmp_phi,2)+
-				pow((aClus->position().eta()-etarec),2));
+	      float tmp_eta=aClus->position().eta()-etarec;
+	      float tmp_dr=sqrt(tmp_phi*tmp_phi + tmp_eta*tmp_eta);
 	  
 	      if ((tmp_dr<dr)&&(tmp_ep>minEp_)&&(tmp_ep<maxEp_)){
 		dr=tmp_dr;
 
-		if(dr < 0.2){ // find the most closest and energetic ECAL cluster
+		if(dr < Min_dr_){ // find the most closest and energetic ECAL cluster
 		  if(aClus->correctedEnergy() > max_ee){
-		    toteta=aClus->position().eta()-etarec;
+		    toteta=tmp_eta;
 		    totphi=tmp_phi;
 		    EP=tmp_ep;
 		    EE=aClus->correctedEnergy();
@@ -509,7 +511,7 @@ GoodSeedProducer::beginRun(const edm::Run & run,
   //read threshold
   FileInPath parFile(conf_.getParameter<string>("ThresholdFile"));
   ifstream ifs(parFile.fullPath().c_str());
-  for (int iy=0;iy<81;iy++) ifs >> thr[iy];
+  for (int iy=0;iy<81;++iy) ifs >> thr[iy];
 }
 
 void 
